@@ -11,10 +11,51 @@ genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
 # ==========================================
-# تصميم واجهة المستخدم (UI Design)
+# إعدادات الصفحة و (RTL CSS)
 # ==========================================
 st.set_page_config(page_title="مُحول الصورة إلى برومبت الذكي", layout="centered")
 
+# كود CSS السحري لجعل الواجهة عربية احترافية بدون تشوه
+rtl_css = """
+<style>
+    /* جعل الاتجاه العام من اليمين لليسار */
+    .stApp {
+        direction: rtl;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* محاذاة جميع النصوص لليمين */
+    p, div, h1, h2, h3, h4, h5, h6, label, span {
+        text-align: right !important;
+    }
+
+    /* إصلاح أيقونات التنبيهات (النجاح، الخطأ، الملاحظات) لتظهر على اليمين بشكل صحيح */
+    div[data-testid="stAlert"] {
+        display: flex;
+        flex-direction: row-reverse;
+        text-align: right;
+    }
+    
+    /* إصلاح زر رفع الملفات */
+    div[data-testid="stFileUploader"] {
+        direction: rtl;
+        text-align: right;
+    }
+
+    /* استثناء مربع النص الذي يظهر فيه البرومبت الإنجليزي ليبقى من اليسار لليمين */
+    textarea {
+        direction: ltr !important;
+        text-align: left !important;
+        font-family: monospace;
+    }
+</style>
+"""
+# تفعيل كود الـ CSS في الواجهة
+st.markdown(rtl_css, unsafe_allow_html=True)
+
+# ==========================================
+# تصميم واجهة المستخدم (UI Design)
+# ==========================================
 st.title("🖼️ أداة الهندسة العكسية للصور الفنية")
 st.subheader("ارفع أي صورة، اختر النمط الفني، وسنحولها إلى برومبت احترافي جاهز للاستخدام.")
 st.markdown("---")
@@ -74,7 +115,7 @@ if uploaded_file is not None:
                 image.save(img_bytes, format='JPEG')
                 img_parts = [{"mime_type": "image/jpeg", "data": img_bytes.getvalue()}]
 
-                # الأمر الخفي الديناميكي: يتغير حسب اختيار المستخدم
+                # الأمر الخفي الديناميكي
                 system_instruction = f"""
                 Analyze the provided image in detail. Your task is to generate ONE highly detailed prompt in English 
                 that could be used by an AI image generator to create a SIMILAR image, but it MUST strictly adopt the following visual style:
@@ -93,6 +134,7 @@ if uploaded_file is not None:
 
                 st.success("تم إنشاء البرومبت بنجاح!")
                 st.markdown("### 📝 البرومبت المقترح (بالإنجليزية):")
+                # هذا المربع سيبقى إنجليزياً بفضل كود CSS لحماية النص
                 st.text_area("انسخ هذا النص واستخدمه في مولدات الصور:", value=generated_prompt, height=200)
 
             except Exception as e:
