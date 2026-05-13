@@ -4,7 +4,7 @@ from PIL import Image
 import io
 
 # جلب المفتاح السري بأمان من إعدادات المنصة
-GOOGLE_API_KEY = st.secrets["AIzaSyBKD_D97KZiRjEHH_8wXAFI81PylKLBelE"]
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 genai.configure(api_key=GOOGLE_API_KEY)
 
 # استخدام النموذج السريع والمجاني للزوار
